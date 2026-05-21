@@ -102,7 +102,7 @@
     color: var(--accent);
   }
 
-  .category-nav {
+  .filters {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
@@ -117,7 +117,7 @@
     z-index: 50;
   }
 
-  .nav-label {
+  .filter-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
     text-transform: uppercase;
@@ -126,7 +126,7 @@
     margin-right: 1rem;
   }
 
-  .nav-btn {
+  .filter-btn {
     background: transparent;
     border: 1px solid var(--line);
     padding: 0.5rem 1rem;
@@ -140,46 +140,18 @@
     border-radius: 100px;
   }
 
-  .nav-btn:hover { border-color: var(--ink); }
+  .filter-btn:hover { border-color: var(--ink); }
 
-  .nav-btn.active {
+  .filter-btn.active {
     background: var(--ink);
     color: var(--paper);
     border-color: var(--ink);
   }
 
-  .category-section {
+  .gallery {
     max-width: 1400px;
     margin: 0 auto;
     padding: 4rem 2rem 2rem;
-  }
-
-  .category-header {
-    margin-bottom: 3rem;
-    display: flex;
-    align-items: baseline;
-    gap: 1.5rem;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 1.5rem;
-  }
-
-  .category-title {
-    font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-style: italic;
-    letter-spacing: -0.02em;
-  }
-
-  .category-count {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-  }
-
-  .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 3rem 2rem;
@@ -199,6 +171,8 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  .artwork.hidden { display: none; }
 
   .artwork-frame {
     position: relative;
@@ -267,7 +241,6 @@
   }
 
   .badge.sold { background: var(--accent); color: var(--paper); }
-  .badge.loaned { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
 
   .lightbox {
     position: fixed;
@@ -323,20 +296,10 @@
     font-style: italic;
     font-weight: 300;
     line-height: 1.1;
-    margin-bottom: 1rem;
-  }
-
-  .lightbox-category {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: rgba(255,255,255,0.6);
     margin-bottom: 2rem;
   }
 
   .lightbox-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
-  .lightbox-badges .badge.loaned { color: var(--paper); border-color: var(--paper); }
 
   .lightbox-cta {
     display: inline-block;
@@ -483,7 +446,7 @@
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 2rem 1rem;
     }
-    .category-nav { padding: 1rem; }
+    .filters { padding: 1rem; }
   }
 </style>
 </head>
@@ -496,7 +459,7 @@
     </div>
     <div class="meta">
       <div>Een digitale galerij</div>
-      <div>Schilderijen · Tekeningen · Foto's</div>
+      <div>Schilderijen</div>
     </div>
   </div>
 </header>
@@ -504,41 +467,18 @@
 <section class="intro">
   <div class="intro-label">— Welkom</div>
   <p class="intro-text">
-    Een selectie van mijn <em>schilderijen, tekeningen en foto's</em>. Klik op een werk om het in detail te bekijken.
+    Een selectie van mijn <em>schilderijen</em>. Klik op een werk om het in detail te bekijken.
   </p>
 </section>
 
-<nav class="category-nav">
-  <span class="nav-label">Categorie</span>
-  <button class="nav-btn active" data-category="all">Alles</button>
-  <button class="nav-btn" data-category="schilderij">Schilderijen</button>
-  <button class="nav-btn" data-category="tekening">Tekeningen</button>
-  <button class="nav-btn" data-category="foto">Foto's</button>
+<nav class="filters">
+  <span class="filter-label">Filter</span>
+  <button class="filter-btn active" data-filter="all">Alles</button>
+  <button class="filter-btn" data-filter="available">Beschikbaar</button>
+  <button class="filter-btn" data-filter="sold">Verkocht</button>
 </nav>
 
-<section class="category-section" data-category="schilderij">
-  <div class="category-header">
-    <h2 class="category-title">Schilderijen</h2>
-    <span class="category-count" id="count-schilderij"></span>
-  </div>
-  <div class="gallery" id="gallery-schilderij"></div>
-</section>
-
-<section class="category-section" data-category="tekening">
-  <div class="category-header">
-    <h2 class="category-title">Tekeningen</h2>
-    <span class="category-count" id="count-tekening"></span>
-  </div>
-  <div class="gallery" id="gallery-tekening"></div>
-</section>
-
-<section class="category-section" data-category="foto">
-  <div class="category-header">
-    <h2 class="category-title">Foto's</h2>
-    <span class="category-count" id="count-foto"></span>
-  </div>
-  <div class="gallery" id="gallery-foto"></div>
-</section>
+<main class="gallery" id="gallery"></main>
 
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose">✕</button>
@@ -547,7 +487,6 @@
     <div class="lightbox-info">
       <div class="lightbox-number" id="lightboxNumber"></div>
       <h2 class="lightbox-title" id="lightboxTitle"></h2>
-      <div class="lightbox-category" id="lightboxCategory"></div>
       <div class="lightbox-badges" id="lightboxBadges"></div>
       <a href="#" class="lightbox-cta" id="lightboxCta">Interesse? Neem contact op</a>
     </div>
@@ -562,7 +501,7 @@
       Stuur een mail
     </a>
     <p class="contact-email">
-      of mail direct naar <a href="mailto:lucassmit27@hotmail.com?">lucassmit27@hotmail.com?</a>
+      of mail direct naar <a href="mailto:lucassmit27@hotmail.com">lucassmit27@hotmail.com</a>
     </p>
   </div>
 </section>
@@ -573,76 +512,49 @@
 
 <script>
   // ============================================
-  // JE WERKEN — Verdeel ze zelf in categorieën
+  // JE WERKEN — pas deze lijst aan
   // ============================================
   // Voor elk werk:
-  //   title    : titel van het werk
-  //   image    : bestandsnaam
-  //   category : "schilderij", "tekening" of "foto"
-  //   sold     : true of false
-  //   loaned   : true of false
+  //   title : titel van het werk
+  //   image : bestandsnaam
+  //   sold  : true (verkocht) of false (beschikbaar)
   // ============================================
   const works = [
-    { title: "Leeuw", image: "leeuw.jpg", category: "schilderij", sold: false, loaned: false },
-    
+    { title: "Leeuw", image: "leeuw.jpg", sold: false },
   ];
 
+  // ============================================
+  // Geen aanpassingen nodig hieronder
+  // ============================================
+
+  const gallery = document.getElementById('gallery');
   const lightbox = document.getElementById('lightbox');
   const lightboxImage = document.getElementById('lightboxImage');
   const lightboxTitle = document.getElementById('lightboxTitle');
   const lightboxNumber = document.getElementById('lightboxNumber');
-  const lightboxCategory = document.getElementById('lightboxCategory');
   const lightboxBadges = document.getElementById('lightboxBadges');
   const lightboxCta = document.getElementById('lightboxCta');
   const lightboxClose = document.getElementById('lightboxClose');
 
-  const categoryLabels = {
-    schilderij: "Schilderij",
-    tekening: "Tekening",
-    foto: "Foto"
-  };
-
   function pad(n) { return String(n).padStart(3, '0'); }
 
   function buildBadges(work) {
-    const parts = [];
-    if (work.sold) parts.push('<span class="badge sold">Verkocht</span>');
-    if (work.loaned) parts.push('<span class="badge loaned">Uitgeleend</span>');
-    return parts.join('');
+    return work.sold ? '<span class="badge sold">Verkocht</span>' : '';
   }
 
   function renderGallery() {
-    const categories = ['schilderij', 'tekening', 'foto'];
-
-    categories.forEach(cat => {
-      const filtered = works.filter(w => w.category === cat);
-      const container = document.getElementById('gallery-' + cat);
-      const counter = document.getElementById('count-' + cat);
-
-      counter.textContent = filtered.length + (filtered.length === 1 ? ' werk' : ' werken');
-
-      const section = document.querySelector(`.category-section[data-category="${cat}"]`);
-      if (filtered.length === 0) {
-        section.style.display = 'none';
-        return;
-      }
-
-      container.innerHTML = filtered.map((work) => {
-        const globalIndex = works.indexOf(work);
-        return `
-          <article class="artwork" data-index="${globalIndex}">
-            <div class="artwork-frame">
-              <span class="artwork-number">№ ${pad(globalIndex + 1)}</span>
-              <img class="artwork-image" src="${work.image}" alt="${work.title}" loading="lazy">
-            </div>
-            <div class="artwork-info">
-              <h3 class="artwork-title">${work.title}</h3>
-              <div class="badges">${buildBadges(work)}</div>
-            </div>
-          </article>
-        `;
-      }).join('');
-    });
+    gallery.innerHTML = works.map((work, i) => `
+      <article class="artwork" data-index="${i}" data-sold="${work.sold}">
+        <div class="artwork-frame">
+          <span class="artwork-number">№ ${pad(i + 1)}</span>
+          <img class="artwork-image" src="${work.image}" alt="${work.title}" loading="lazy">
+        </div>
+        <div class="artwork-info">
+          <h3 class="artwork-title">${work.title}</h3>
+          <div class="badges">${buildBadges(work)}</div>
+        </div>
+      </article>
+    `).join('');
 
     document.querySelectorAll('.artwork').forEach(el => {
       el.addEventListener('click', () => openLightbox(parseInt(el.dataset.index)));
@@ -655,7 +567,6 @@
     lightboxImage.alt = work.title;
     lightboxTitle.textContent = work.title;
     lightboxNumber.textContent = `Werk № ${pad(index + 1)}`;
-    lightboxCategory.textContent = categoryLabels[work.category] || '';
     lightboxBadges.innerHTML = buildBadges(work);
 
     const subject = encodeURIComponent(`Interesse in: ${work.title}`);
@@ -678,28 +589,18 @@
     if (e.key === 'Escape') closeLightbox();
   });
 
-  document.querySelectorAll('.nav-btn').forEach(btn => {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const cat = btn.dataset.category;
-
-      document.querySelectorAll('.category-section').forEach(section => {
-        if (cat === 'all') {
-          const sectionCat = section.dataset.category;
-          const hasWorks = works.some(w => w.category === sectionCat);
-          section.style.display = hasWorks ? 'block' : 'none';
-        } else {
-          section.style.display = section.dataset.category === cat ? 'block' : 'none';
-        }
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.artwork').forEach(art => {
+        const sold = art.dataset.sold === 'true';
+        let show = true;
+        if (filter === 'available') show = !sold;
+        else if (filter === 'sold') show = sold;
+        art.classList.toggle('hidden', !show);
       });
-
-      if (cat !== 'all') {
-        const target = document.querySelector(`.category-section[data-category="${cat}"]`);
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
     });
   });
 
