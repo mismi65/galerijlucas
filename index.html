@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucas Smit — Galerij</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f1ede4;
+    --ink: #1a1a1a;
+    --muted: #6b6356;
+    --accent: #c1410b;
+    --line: #d4cdbf;
+    --paper: #faf7f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-x: hidden;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  header {
+    padding: 4rem 2rem 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 2rem;
+  }
+
+  .title-block h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-variation-settings: "opsz" 144;
+  }
+
+  .title-block h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .meta div + div { margin-top: 0.5rem; }
+
+  .intro {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .intro-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    padding-top: 0.5rem;
+  }
+
+  .intro-text {
+    font-size: 1.5rem;
+    line-height: 1.4;
+    font-weight: 300;
+    max-width: 50ch;
+  }
+
+  .intro-text em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .category-nav {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 50;
+  }
+
+  .nav-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-right: 1rem;
+  }
+
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 0.5rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 100px;
+  }
+
+  .nav-btn:hover { border-color: var(--ink); }
+
+  .nav-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .category-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 2rem 2rem;
+  }
+
+  .category-header {
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1.5rem;
+  }
+
+  .category-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+
+  .category-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 3rem 2rem;
+  }
+
+  .artwork {
+    cursor: pointer;
+    transition: opacity 0.3s;
+    animation: fadeUp 0.6s backwards;
+  }
+
+  .artwork:nth-child(3n) { animation-delay: 0.05s; }
+  .artwork:nth-child(3n+1) { animation-delay: 0.1s; }
+  .artwork:nth-child(3n+2) { animation-delay: 0.15s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .artwork-frame {
+    position: relative;
+    background: var(--paper);
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s;
+    overflow: hidden;
+  }
+
+  .artwork:hover .artwork-frame {
+    transform: translateY(-6px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 20px 40px rgba(0,0,0,0.12);
+  }
+
+  .artwork-image {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    display: block;
+    background: var(--bg);
+  }
+
+  .artwork-number {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .artwork-info {
+    padding: 1.25rem 0.25rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1rem;
+  }
+
+  .artwork-title {
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .badge.sold { background: var(--accent); color: var(--paper); }
+  .badge.loaned { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 18, 14, 0.92);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .lightbox.active { opacity: 1; pointer-events: auto; }
+
+  .lightbox-content {
+    max-width: 1100px;
+    width: 100%;
+    max-height: 90vh;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    transform: scale(0.96);
+    transition: transform 0.3s;
+  }
+
+  .lightbox.active .lightbox-content { transform: scale(1); }
+
+  .lightbox-image {
+    width: 100%;
+    height: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    background: var(--paper);
+  }
+
+  .lightbox-info { color: var(--paper); align-self: center; }
+
+  .lightbox-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 1rem;
+  }
+
+  .lightbox-title {
+    font-size: 2.5rem;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .lightbox-category {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 2rem;
+  }
+
+  .lightbox-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .lightbox-badges .badge.loaned { color: var(--paper); border-color: var(--paper); }
+
+  .lightbox-cta {
+    display: inline-block;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 0.75rem 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: transform 0.2s;
+  }
+
+  .lightbox-cta:hover { transform: translateY(-2px); }
+
+  .lightbox-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--paper);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .lightbox-close:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--paper);
+  }
+
+  .contact-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6rem 2rem;
+    margin-top: 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(193, 65, 11, 0.15), transparent 60%);
+    pointer-events: none;
+  }
+
+  .contact-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .contact-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 2rem;
+  }
+
+  .contact-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .contact-btn {
+    display: inline-block;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 1.25rem 2.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .contact-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  .contact-email {
+    margin-top: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .contact-email a {
+    color: var(--paper);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 2px;
+  }
+
+  footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+
+  @media (max-width: 768px) {
+    .header-inner, .intro {
+      grid-template-columns: 1fr;
+    }
+    .meta { text-align: left; }
+    .intro { gap: 1.5rem; }
+    .intro-text { font-size: 1.2rem; }
+    .lightbox-content { grid-template-columns: 1fr; }
+    .lightbox-title { font-size: 1.5rem; }
+    .gallery {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 2rem 1rem;
+    }
+    .category-nav { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="title-block">
+      <h1>Mike <em>Smit</em></h1>
+    </div>
+    <div class="meta">
+      <div>Een digitale galerij</div>
+      <div>Schilderijen · Tekeningen · Foto's</div>
+    </div>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="intro-label">— Welkom</div>
+  <p class="intro-text">
+    Een selectie van mijn <em>schilderijen, tekeningen en foto's</em>. Klik op een werk om het in detail te bekijken.
+  </p>
+</section>
+
+<nav class="category-nav">
+  <span class="nav-label">Categorie</span>
+  <button class="nav-btn active" data-category="all">Alles</button>
+  <button class="nav-btn" data-category="schilderij">Schilderijen</button>
+  <button class="nav-btn" data-category="tekening">Tekeningen</button>
+  <button class="nav-btn" data-category="foto">Foto's</button>
+</nav>
+
+<section class="category-section" data-category="schilderij">
+  <div class="category-header">
+    <h2 class="category-title">Schilderijen</h2>
+    <span class="category-count" id="count-schilderij"></span>
+  </div>
+  <div class="gallery" id="gallery-schilderij"></div>
+</section>
+
+<section class="category-section" data-category="tekening">
+  <div class="category-header">
+    <h2 class="category-title">Tekeningen</h2>
+    <span class="category-count" id="count-tekening"></span>
+  </div>
+  <div class="gallery" id="gallery-tekening"></div>
+</section>
+
+<section class="category-section" data-category="foto">
+  <div class="category-header">
+    <h2 class="category-title">Foto's</h2>
+    <span class="category-count" id="count-foto"></span>
+  </div>
+  <div class="gallery" id="gallery-foto"></div>
+</section>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">✕</button>
+  <div class="lightbox-content">
+    <img class="lightbox-image" id="lightboxImage" src="" alt="">
+    <div class="lightbox-info">
+      <div class="lightbox-number" id="lightboxNumber"></div>
+      <h2 class="lightbox-title" id="lightboxTitle"></h2>
+      <div class="lightbox-category" id="lightboxCategory"></div>
+      <div class="lightbox-badges" id="lightboxBadges"></div>
+      <a href="#" class="lightbox-cta" id="lightboxCta">Interesse? Neem contact op</a>
+    </div>
+  </div>
+</div>
+
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="contact-label">— Contact</div>
+    <h2 class="contact-title">Interesse? <em>Neem contact op</em></h2>
+    <a href="mailto:mike.smit@ziggo.nl?subject=Interesse%20in%20werk" class="contact-btn">
+      Stuur een mail
+    </a>
+    <p class="contact-email">
+      of mail direct naar <a href="mailto:mike.smit@ziggo.nl">mike.smit@ziggo.nl</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  © 2026 — Mike Smit
+</footer>
+
+<script>
+  // ============================================
+  // JE WERKEN — Verdeel ze zelf in categorieën
+  // ============================================
+  // Voor elk werk:
+  //   title    : titel van het werk
+  //   image    : bestandsnaam
+  //   category : "schilderij", "tekening" of "foto"
+  //   sold     : true of false
+  //   loaned   : true of false
+  // ============================================
+  const works = [
+    { title: "Leeuw", image: "leeuw.jpg", category: "schilderij", sold: false, loaned: false },
+    
+  ];
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImage = document.getElementById('lightboxImage');
+  const lightboxTitle = document.getElementById('lightboxTitle');
+  const lightboxNumber = document.getElementById('lightboxNumber');
+  const lightboxCategory = document.getElementById('lightboxCategory');
+  const lightboxBadges = document.getElementById('lightboxBadges');
+  const lightboxCta = document.getElementById('lightboxCta');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  const categoryLabels = {
+    schilderij: "Schilderij",
+    tekening: "Tekening",
+    foto: "Foto"
+  };
+
+  function pad(n) { return String(n).padStart(3, '0'); }
+
+  function buildBadges(work) {
+    const parts = [];
+    if (work.sold) parts.push('<span class="badge sold">Verkocht</span>');
+    if (work.loaned) parts.push('<span class="badge loaned">Uitgeleend</span>');
+    return parts.join('');
+  }
+
+  function renderGallery() {
+    const categories = ['schilderij', 'tekening', 'foto'];
+
+    categories.forEach(cat => {
+      const filtered = works.filter(w => w.category === cat);
+      const container = document.getElementById('gallery-' + cat);
+      const counter = document.getElementById('count-' + cat);
+
+      counter.textContent = filtered.length + (filtered.length === 1 ? ' werk' : ' werken');
+
+      const section = document.querySelector(`.category-section[data-category="${cat}"]`);
+      if (filtered.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      container.innerHTML = filtered.map((work) => {
+        const globalIndex = works.indexOf(work);
+        return `
+          <article class="artwork" data-index="${globalIndex}">
+            <div class="artwork-frame">
+              <span class="artwork-number">№ ${pad(globalIndex + 1)}</span>
+              <img class="artwork-image" src="${work.image}" alt="${work.title}" loading="lazy">
+            </div>
+            <div class="artwork-info">
+              <h3 class="artwork-title">${work.title}</h3>
+              <div class="badges">${buildBadges(work)}</div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    });
+
+    document.querySelectorAll('.artwork').forEach(el => {
+      el.addEventListener('click', () => openLightbox(parseInt(el.dataset.index)));
+    });
+  }
+
+  function openLightbox(index) {
+    const work = works[index];
+    lightboxImage.src = work.image;
+    lightboxImage.alt = work.title;
+    lightboxTitle.textContent = work.title;
+    lightboxNumber.textContent = `Werk № ${pad(index + 1)}`;
+    lightboxCategory.textContent = categoryLabels[work.category] || '';
+    lightboxBadges.innerHTML = buildBadges(work);
+
+    const subject = encodeURIComponent(`Interesse in: ${work.title}`);
+    lightboxCta.href = `mailto:lucassmit27@hotmail.com?subject=${subject}`;
+
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.category;
+
+      document.querySelectorAll('.category-section').forEach(section => {
+        if (cat === 'all') {
+          const sectionCat = section.dataset.category;
+          const hasWorks = works.some(w => w.category === sectionCat);
+          section.style.display = hasWorks ? 'block' : 'none';
+        } else {
+          section.style.display = section.dataset.category === cat ? 'block' : 'none';
+        }
+      });
+
+      if (cat !== 'all') {
+        const target = document.querySelector(`.category-section[data-category="${cat}"]`);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  });
+
+  renderGallery();
+</script>
+
+</body>
+</html>
